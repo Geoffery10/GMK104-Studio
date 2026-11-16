@@ -1,0 +1,9 @@
+include LICENSE README.md SAFETY.md THIRD_PARTY_NOTICES.md CHANGELOG.md CONTRIBUTING.md
+include 70-gmk104.rules requirements.txt launch-studio.py install-desktop.py
+recursive-include gmk104_app *.py *.svg
+recursive-include tests *.py *.json *.md *.gif
+recursive-include docs *.md
+recursive-include packaging *
+recursive-include scripts *.py
+exclude protocol/capture.py protocol/analyze.py protocol/make_tests.py
+global-exclude __pycache__ *.py[cod]

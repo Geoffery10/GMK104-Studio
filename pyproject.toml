@@ -30,7 +30,7 @@ gmk104-upload = "protocol.gmk104:main"
 build = ["pyinstaller>=6.12,<7"]
 
 [tool.setuptools]
-packages = ["gmk104_app", "protocol"]
+packages = ["gmk104_app", "gmk104_app.assets", "protocol"]
 
 [tool.setuptools.package-data]
 gmk104_app = ["assets/*.svg"]
