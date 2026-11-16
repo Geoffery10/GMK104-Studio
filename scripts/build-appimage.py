@@ -57,6 +57,13 @@ def main():
         shutil.rmtree(appdir)  # Only this script's generated staging directory.
     (appdir / "usr/lib").mkdir(parents=True)
     shutil.copytree(BUILD / "bundle/gmk104-studio", appdir / "usr/lib/gmk104-studio")
+    # Fontconfig reads the host's configuration. An older bundled copy cannot
+    # parse newer desktop configs (e.g. CachyOS), so use the desktop's stable
+    # fontconfig/FreeType ABI together rather than mixing generations.
+    internal = appdir / "usr/lib/gmk104-studio/_internal"
+    for pattern in ("libfontconfig.so*", "libfreetype.so*"):
+        for library in internal.glob(pattern):
+            library.unlink()
     shutil.copyfile(ROOT / "packaging/AppRun", appdir / "AppRun")
     (appdir / "AppRun").chmod(0o755)
     (appdir / "usr/bin").mkdir()

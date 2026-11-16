@@ -26,6 +26,8 @@ AppImage runtime can change. Exact Python versions are recorded per release.
 
 Required system libraries include Mesa/OpenGL/EGL, fontconfig, xkbcommon,
 Wayland, and XCB. `.github/workflows/ci.yml` lists Ubuntu package dependencies.
+Fontconfig and FreeType are intentionally taken from the host desktop, avoiding
+an old bundled parser reading a newer system font configuration.
 FUSE is not needed for the build: appimagetool is extracted before execution.
 
 ## CI/CD
