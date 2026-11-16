@@ -1,0 +1,10 @@
+[Desktop Entry]
+Type=Application
+Name=GMK104 Studio
+Comment=Native Linux image and GIF uploader for the ZUOYA GMK104
+Exec=gmk104-studio %f
+Icon=gmk104-studio
+Terminal=false
+Categories=Graphics;2DGraphics;RasterGraphics;
+MimeType=image/gif;image/png;image/jpeg;image/webp;
+StartupNotify=true

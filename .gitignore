@@ -1,0 +1,26 @@
+# Local vendor downloads, personal artwork, screenshots, and USB captures.
+/*.exe
+/*.ppdb
+/*Screenshot*.png
+/Gif/
+/protocol/captures/
+/protocol/tests/
+/protocol/test_*.py
+/protocol/make_tests.py
+/protocol/README.md
+/protocol/PROTOCOL.md
+/protocol/analyze.py
+/protocol/capture.py
+__pycache__/
+*.py[cod]
+.venv/
+.pytest_cache/
+.ruff_cache/
+build/
+dist/
+*.egg-info/
+*.AppImage
+*.AppDir/
+*.spec
+*.bin
+.DS_Store

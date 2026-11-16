@@ -1,0 +1,2 @@
+# Allow the active local desktop user to access the ZUOYA GMK104 HID interfaces.
+SUBSYSTEM=="hidraw", ATTRS{idVendor}=="320f", ATTRS{idProduct}=="5055", TAG+="uaccess"

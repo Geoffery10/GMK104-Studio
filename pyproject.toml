@@ -1,0 +1,36 @@
+[build-system]
+requires = ["setuptools>=77"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "gmk104-studio"
+version = "1.0.0"
+description = "Native Linux image and GIF uploader for the ZUOYA GMK104 keyboard"
+readme = "README.md"
+requires-python = ">=3.11"
+license = "MIT"
+authors = [{name = "Geoffery10", email = "powellgeoffery@gmail.com"}]
+dependencies = ["Pillow>=11.3,<14", "PySide6>=6.8,<7"]
+classifiers = [
+  "Development Status :: 4 - Beta",
+  "Operating System :: POSIX :: Linux",
+  "Programming Language :: Python :: 3",
+  "Topic :: Multimedia :: Graphics",
+]
+
+[project.urls]
+Homepage = "https://github.com/Geoffery10/GMK104-Linux-Image-Uploader"
+Issues = "https://github.com/Geoffery10/GMK104-Linux-Image-Uploader/issues"
+
+[project.scripts]
+gmk104-studio = "gmk104_app.ui:main"
+gmk104-upload = "protocol.gmk104:main"
+
+[project.optional-dependencies]
+build = ["pyinstaller>=6.12,<7"]
+
+[tool.setuptools]
+packages = ["gmk104_app", "protocol"]
+
+[tool.setuptools.package-data]
+gmk104_app = ["assets/*.svg"]

@@ -1,0 +1,32 @@
+name: Bug report
+description: Report an app, packaging, or device problem
+body:
+  - type: markdown
+    attributes:
+      value: "Stop after an upload error. Never share raw USB keyboard-input captures or private data."
+  - type: input
+    id: version
+    attributes:
+      label: App version and installation method
+      placeholder: "v1.0 AppImage or source"
+    validations:
+      required: true
+  - type: textarea
+    id: environment
+    attributes:
+      label: Environment
+      description: "Distribution, desktop, Wayland/X11, keyboard USB ID and firmware if known."
+    validations:
+      required: true
+  - type: textarea
+    id: problem
+    attributes:
+      label: What happened?
+      description: "Steps, expected behavior, actual behavior, and exact error message."
+    validations:
+      required: true
+  - type: textarea
+    id: safety
+    attributes:
+      label: Device state after the error
+      description: "Does typing still work? Did the screen change? Avoid repeated retries."
