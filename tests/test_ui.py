@@ -8,11 +8,11 @@ import unittest
 from unittest.mock import Mock, patch
 
 from PIL import Image
-from PySide6.QtCore import QSettings
+from PySide6.QtCore import QSettings, Qt
 from PySide6.QtWidgets import QApplication, QMessageBox
 
 from gmk104_app.core import History, save_animation
-from gmk104_app.ui import UploadWorker, Window
+from gmk104_app.ui import STYLE, UploadWorker, Window
 from protocol import gmk104
 
 
@@ -51,6 +51,39 @@ class UiTests(unittest.TestCase):
     def test_no_device_disables_upload(self):
         self.window.load(self.source)
         self.assertFalse(self.window.upload_button.isEnabled())
+
+    def test_screen_content_is_inset_from_tab_edges(self):
+        margins = self.window.tabs.widget(0).layout().contentsMargins()
+        self.assertEqual((margins.left(), margins.top(), margins.right(), margins.bottom()), (16, 16, 16, 16))
+
+    def test_screen_editor_column_has_padding_on_both_sides(self):
+        content = self.window.preview.parentWidget()
+        margins = content.layout().contentsMargins()
+        self.assertEqual(margins.left(), 16)
+        self.assertEqual(margins.right(), 16)
+        for widget in (self.window.info, self.window.play_button, self.window.export_button):
+            self.assertIs(widget.parentWidget(), content)
+
+    def test_long_recent_upload_name_does_not_need_horizontal_scrolling(self):
+        name = "a-very-long-original-upload-filename-" * 10 + ".gif"
+        self.window.setStyleSheet(STYLE)
+        self.window.history.record(self.source, name, 500)
+        self.window.populate_history()
+        self.window.show()
+        for _ in range(4):
+            self.app.processEvents()
+        recents = self.window.recents
+        item = recents.item(0)
+        self.assertEqual(recents.horizontalScrollBarPolicy(), Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
+        self.assertEqual(recents.textElideMode(), Qt.TextElideMode.ElideRight)
+        self.assertFalse(recents.horizontalScrollBar().isVisible())
+        self.assertLessEqual(recents.visualItemRect(item).width(), recents.viewport().width())
+        self.assertIn(name, item.toolTip())
+        self.assertEqual(item.data(Qt.ItemDataRole.UserRole + 1), name)
+        self.window.resize(980, 850)
+        for _ in range(4):
+            self.app.processEvents()
+        self.assertLessEqual(recents.visualItemRect(item).width(), recents.viewport().width())
 
     def test_upload_starts_without_a_confirmation_dialog(self):
         self.window.load(self.source)

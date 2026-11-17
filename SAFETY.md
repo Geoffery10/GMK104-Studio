@@ -24,7 +24,7 @@ Do not try this with other keyboard models, flash firmware, remove the USB cable
 during an upload, or run the Windows configuration tool concurrently.
 The application does not implement firmware updating.
 
-## What the application does
+## What screen uploads do
 
 1. Checks device identity, interface number, and exact HID report descriptor.
 2. Reads the current 48-byte settings record.
@@ -42,6 +42,28 @@ They are useful evidence, not a guaranteed recovery mechanism.
 Clicking **Upload to keyboard** starts immediately. The GUI has no additional
 confirmation dialog. Errors are shown, and settings backups remain mandatory.
 The CLI requires explicit confirmation for uploads.
+
+## V2 keymapping
+
+Keymapping uses a separate, strictly identified VIA interface (interface 1).
+Current mappings load automatically on opening the tab and save a full keymap
+backup; loading never writes key mappings. All edits remain local until
+**Review and apply…** is confirmed. Apply checks for external changes, backs up
+before writing, changes only selected keymap words, then verifies every layer.
+
+An unchanged-word write was verified against a complete keymap readback. The
+keyboard owner also reports successful changed keymap writes on their device;
+this is not exhaustive validation of every assignment or firmware revision.
+Restoration and persistence after power cycling remain unverified.
+An interrupted write can leave a partial keymap; there is no automatic retry or
+rollback. Keep a usable Fn/layer key and close VIA/other configuration tools.
+**Load backup…** stages a restore for review; it never writes immediately.
+Keymap backups do not include firmware, screen content, lighting or macros.
+**Restore defaults** stages a bundled snapshot captured from the configured
+keyboard, not manufacturer-certified factory defaults. It requires review and
+Apply before writing; no firmware factory-reset command is sent. A separate
+first-read recovery baseline is retained and never automatically replaced.
+See [the keymapping guide](docs/KEYMAPPING.md) for the full scope and workflow.
 
 ## Permissions
 

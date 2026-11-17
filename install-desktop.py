@@ -21,7 +21,7 @@ def quote(value):
 entry = apps / "io.local.gmk104-studio.desktop"
 entry.write_text(
     "[Desktop Entry]\nType=Application\nName=GMK104 Studio\n"
-    "Comment=Native keyboard screen artwork and GIF uploads\n"
+    "Comment=Native Linux keyboard screen editing and keymapping\n"
     f"Exec={quote(sys.executable)} {quote(root / 'launch-studio.py')} %f\n"
     "Icon=gmk104-studio\nTerminal=false\nCategories=Graphics;2DGraphics;RasterGraphics;\n"
     "MimeType=image/gif;image/png;image/jpeg;image/webp;\n"

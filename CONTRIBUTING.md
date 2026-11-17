@@ -1,8 +1,9 @@
 # Contributing
 
 Issues and pull requests are welcome. Read [SAFETY.md](SAFETY.md) first.
-The application is Linux-specific and currently supports only the tested GMK104
-screen interface, Custom1, one/two frames, and 500–1000 ms intervals.
+The application is Linux-specific: GMK104 wired screen uploads (Custom1,
+one/two frames, 500–1000 ms) and four-layer VIA keymapping on the observed
+interfaces/firmware. See [keymapping scope](docs/KEYMAPPING.md).
 
 ## Setup and tests
 
@@ -21,12 +22,13 @@ Use mocks for transport and GUI uploads.
 
 | Path | Purpose |
 | --- | --- |
-| `gmk104_app/` | Qt UI, image preparation, local history, original icon |
+| `gmk104_app/` | Screen/keymap UI, image preparation, local history, original icon |
 | `protocol/gmk104.py` | Packet encoding, readback, backup, Linux HID transport, CLI |
+| `protocol/via.py` | Strict VIA buffer transport, full keymap backup/apply/verification |
 | `tests/` | Offline tests, generated test artwork, sanitized regression evidence |
 | `docs/` | Protocol, build, and release documentation |
 | `packaging/` | AppImage launcher, desktop entry, AppStream metadata |
-| `scripts/` | Build and fixture-generation tools |
+| `scripts/` | Build, fixture-generation and offline screenshot tools |
 | `.github/workflows/` | Test, bundle, and tagged-release automation |
 
 ## Protocol work

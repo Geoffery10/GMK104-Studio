@@ -16,7 +16,7 @@ QT_QPA_PLATFORM=offscreen .venv/bin/python -m unittest discover -s tests -v
 The script freezes Python/Pillow/PySide6 with PyInstaller, explicitly includes
 Wayland and X11 plugins, assembles an AppDir with notices and the udev rule,
 runs packaged version/GUI smoke tests, verifies the pinned appimagetool download,
-and builds `dist/GMK104-Studio-1.0.0-x86_64.AppImage`.
+and builds `dist/GMK104-Studio-2.0.0-x86_64.AppImage`.
 It also writes `SHA256SUMS`, `70-gmk104.rules`, and `build-info.json`.
 
 The build needs internet access for Python dependencies, appimagetool, and
@@ -40,7 +40,7 @@ Every pull request and main-branch push:
 4. Starts the packaged GUI offscreen without uploading.
 5. Uploads the AppImage, rule, manifest, and checksums as a workflow artifact.
 
-A version tag (`v1.0` for application version `1.0.0`) runs the same checks and
+A version tag (`v2.0` for application version `2.0.0`) runs the same checks and
 then creates a GitHub Release with those files. Publishing has `contents: write`
 only in its release job; ordinary tests/builds have read-only repository access.
 
@@ -56,13 +56,13 @@ only in its release job; ordinary tests/builds have read-only repository access.
 5. Create/push the release tag:
 
    ```bash
-   git tag -a v1.0 -m "GMK104 Studio v1.0"
-   git push origin v1.0
+    git tag -a v2.0 -m "GMK104 Studio v2.0"
+    git push origin v2.0
    ```
 
 6. Check that the release workflow succeeded and the downloaded files match
    `SHA256SUMS`.
 
-No signing key is configured in v1.0. Checksums detect corruption, not publisher
+No signing key is configured. Checksums detect corruption, not publisher
 identity independently of GitHub. GitHub-generated source archives are provided
 alongside the binary. Qt and other bundled components retain their own licenses.

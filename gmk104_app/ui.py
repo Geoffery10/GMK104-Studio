@@ -14,38 +14,50 @@ from PySide6.QtWidgets import (
     QApplication, QCheckBox, QComboBox, QFileDialog, QFormLayout, QFrame,
     QHBoxLayout, QInputDialog, QLabel, QListWidget, QListWidgetItem, QMainWindow,
     QMessageBox, QProgressBar, QPushButton, QSlider, QSpinBox, QSplitter,
-    QVBoxLayout, QWidget,
+    QStyledItemDelegate, QTabWidget, QVBoxLayout, QWidget,
 )
 
 from protocol import gmk104 as protocol
 from .core import Adjustments, History, external_editor_environment, load_animation, render_frames, save_animation
 from . import __version__
+from .keymap import KeymapPanel
 
 STYLE = """
 QWidget { background: #111111; color: #f6f2e9; font-size: 13px; }
 QMainWindow { background: #111111; }
+QTabWidget::pane { border: 1px solid #343434; }
+QTabBar::tab { background: #1b1b1b; border: 1px solid #494949; border-bottom: 2px solid #494949; padding: 10px 18px; margin-right: 4px; font-weight: 600; }
+QTabBar::tab:selected { background: #242424; border-bottom-color: #ed1935; }
+QTabBar::tab:hover { background: #303030; }
 QFrame#card { background: #1b1b1b; border: 1px solid #494949; border-left: 4px solid #ed1935; border-radius: 2px; }
 QLabel { background: transparent; }
 QLabel#title { font-size: 30px; font-weight: 900; font-style: italic; color: #fffaf0; }
 QLabel#muted { color: #b8b5ae; }
 QLabel#eyebrow { color: #ff3a50; font-size: 11px; font-weight: 800; letter-spacing: 2px; }
-QPushButton { background: #242424; border: 1px solid #68645e; border-radius: 2px; padding: 9px 14px; font-weight: 600; }
+QPushButton { background: #242424; border: 1px solid #68645e; border-radius: 2px; padding: 10px 14px; font-weight: 600; }
 QPushButton:hover { background: #393939; border-color: #fffaf0; }
 QPushButton:disabled { color: #747474; background: #1c1c1c; border-color: #343434; }
 QPushButton#primary { background: #ed1935; color: #ffffff; font-weight: 800; border: 1px solid #ff566b; }
 QPushButton#primary:hover { background: #ff304a; border-color: #ffffff; }
 QPushButton#primary:disabled { background: #54232a; color: #b38d92; border-color: #54232a; }
-QListWidget { background: #171717; border: 1px solid #454545; border-radius: 2px; padding: 5px; outline: none; }
-QListWidget::item { padding: 9px; border-bottom: 1px solid #323232; }
+QListWidget { background: #171717; border: 1px solid #454545; border-radius: 2px; padding: 8px; outline: none; }
+QListWidget::item { padding: 10px; border-bottom: 1px solid #323232; }
 QListWidget::item:selected { background: #b8142c; color: #fff; }
-QComboBox, QSpinBox { background: #242424; border: 1px solid #68645e; border-radius: 2px; padding: 7px; }
+QComboBox, QSpinBox, QLineEdit { background: #242424; border: 1px solid #68645e; border-radius: 2px; padding: 8px 10px; }
 QComboBox QAbstractItemView { background: #242424; selection-background-color: #b8142c; }
+QCheckBox { background: transparent; spacing: 8px; padding: 4px 0; }
+QSlider { background: transparent; min-height: 24px; }
 QSlider::groove:horizontal { background: #494949; height: 5px; }
 QSlider::handle:horizontal { background: #fffaf0; border: 2px solid #ed1935; width: 12px; margin: -5px 0; }
 QProgressBar { border: 1px solid #68645e; border-radius: 2px; background: #202020; text-align: center; min-height: 22px; }
 QProgressBar::chunk { background: #bc1730; }
-QToolTip { background: #242424; color: #fff; border: 1px solid #ed1935; }
+QToolTip { background: #242424; color: #fff; border: 1px solid #ed1935; padding: 6px 8px; }
 QSplitter::handle { background: #494949; width: 1px; }
+QScrollBar:vertical { background: #111111; width: 12px; margin: 0; }
+QScrollBar::handle:vertical { background: #494949; min-height: 24px; border-radius: 3px; }
+QScrollBar::handle:vertical:disabled { background: transparent; }
+QScrollBar::add-line:vertical, QScrollBar::sub-line:vertical { height: 0; }
+QScrollBar::add-page:vertical, QScrollBar::sub-page:vertical { background: transparent; }
 """
 
 
@@ -79,6 +91,26 @@ class Preview(QWidget):
                              "Drop a GIF or image here\n\n240 × 135  /  black canvas  /  no stretching")
         painter.setPen(QColor("#ed1935"))
         painter.drawRect(rect)
+
+
+class RecentUploadDelegate(QStyledItemDelegate):
+    def sizeHint(self, option, index):
+        size = super().sizeHint(option, index)
+        # Bound the real item rectangle, not just the scrollbar. Otherwise a
+        # long filename is clipped outside the viewport instead of elided.
+        size.setWidth(max(1, self.parent().viewport().width()))
+        return size
+
+
+class RecentUploads(QListWidget):
+    """Keep thumbnail rows inside the sidebar, even for long original names."""
+    def __init__(self):
+        super().__init__()
+        self.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
+        self.setTextElideMode(Qt.TextElideMode.ElideRight)
+        self.setResizeMode(self.ResizeMode.Adjust)
+        self.setIconSize(QSize(96, 54))
+        self.setItemDelegate(RecentUploadDelegate(self))
 
 
 class UploadWorker(QThread):
@@ -132,10 +164,11 @@ class Window(QMainWindow):
         self.setCentralWidget(central)
         outer = QVBoxLayout(central)
         outer.setContentsMargins(24, 20, 24, 20)
-        outer.setSpacing(15)
+        outer.setSpacing(16)
         heading = QHBoxLayout()
+        heading.setSpacing(12)
         titles = QVBoxLayout()
-        eyebrow = QLabel("TAKE OVER YOUR SCREEN  /  LINUX NATIVE")
+        eyebrow = QLabel("SCREEN + KEYMAP  /  LINUX NATIVE")
         eyebrow.setObjectName("eyebrow")
         titles.addWidget(eyebrow)
         title = QLabel("GMK104 / STUDIO")
@@ -148,15 +181,27 @@ class Window(QMainWindow):
         self.refresh_button = self.button("Refresh device", self.check_device)
         heading.addWidget(self.refresh_button)
         outer.addLayout(heading)
+        self.tabs = QTabWidget()
+        outer.addWidget(self.tabs, 1)
+        screen_page = QWidget()
+        screen_layout = QVBoxLayout(screen_page)
+        screen_layout.setContentsMargins(16, 16, 16, 16)
         splitter = QSplitter(Qt.Orientation.Horizontal)
-        outer.addWidget(splitter, 1)
+        screen_layout.addWidget(splitter)
+        self.tabs.addTab(screen_page, "Screen")
+        self.keymap = KeymapPanel(self.history.root.parent / "backups",
+                                 lambda: self.worker is not None and self.worker.isRunning())
+        self.keymap.busy_changed.connect(self.update_enabled)
+        self.tabs.addTab(self.keymap, "Keymap")
+        self.tabs.currentChanged.connect(
+            lambda index: self.keymap.set_active(self.tabs.widget(index) is self.keymap))
         sidebar = QWidget()
         side = QVBoxLayout(sidebar)
-        side.setContentsMargins(0, 0, 14, 0)
+        side.setContentsMargins(0, 0, 16, 0)
+        side.setSpacing(12)
         side.addWidget(self.button("＋ Open GIF or image", self.open_file, primary=True))
         side.addWidget(self.muted("RECENT SUCCESSFUL UPLOADS"))
-        self.recents = QListWidget()
-        self.recents.setIconSize(QSize(96, 54))
+        self.recents = RecentUploads()
         self.recents.itemActivated.connect(self.open_recent)
         side.addWidget(self.recents, 1)
         side.addWidget(self.muted("Last 10 uploads, stored locally.\nDouble-click to reopen. Originals stay untouched."))
@@ -167,13 +212,14 @@ class Window(QMainWindow):
         splitter.addWidget(sidebar)
         content = QWidget()
         body = QVBoxLayout(content)
-        body.setContentsMargins(0, 0, 0, 0)
+        body.setContentsMargins(16, 0, 16, 0)
         body.setSpacing(12)
         self.info = self.muted("Open artwork to begin • GIF, PNG, JPEG, WebP")
         body.addWidget(self.info)
         self.preview = Preview()
         body.addWidget(self.preview, 1)
         playback = QHBoxLayout()
+        playback.setSpacing(10)
         self.play_button = self.button("Pause preview", self.toggle_play)
         playback.addWidget(self.play_button)
         self.frame_select = QComboBox()
@@ -193,8 +239,10 @@ class Window(QMainWindow):
         card = QFrame()
         card.setObjectName("card")
         controls = QVBoxLayout(card)
-        controls.setContentsMargins(14, 12, 14, 12)
+        controls.setContentsMargins(16, 14, 16, 14)
+        controls.setSpacing(12)
         transforms = QHBoxLayout()
+        transforms.setSpacing(10)
         transforms.addWidget(QLabel("Rotate"))
         self.rotation = QComboBox()
         self.rotation.addItems(["0°", "90°", "180°", "270°"])
@@ -209,6 +257,7 @@ class Window(QMainWindow):
         transforms.addWidget(self.button("Reset edits", self.reset_edits))
         controls.addLayout(transforms)
         brightness = QHBoxLayout()
+        brightness.setSpacing(10)
         brightness.addWidget(QLabel("Brightness"))
         self.brightness = QSlider(Qt.Orientation.Horizontal)
         self.brightness.setRange(25, 200)
@@ -219,6 +268,7 @@ class Window(QMainWindow):
         brightness.addWidget(self.brightness_label)
         controls.addLayout(brightness)
         actions = QHBoxLayout()
+        actions.setSpacing(10)
         self.duplicate_button = self.button("Duplicate frame", self.duplicate_frame)
         self.remove_button = self.button("Remove frame", self.remove_frame)
         actions.addWidget(self.duplicate_button)
@@ -232,6 +282,7 @@ class Window(QMainWindow):
         body.addWidget(card)
         body.addWidget(self.muted("Black transparency • Proportional fit + black padding • Custom1 • 1–2 frames"))
         bottom = QHBoxLayout()
+        bottom.setSpacing(10)
         self.export_button = self.button("Export prepared GIF…", self.export)
         bottom.addWidget(self.export_button)
         self.editor_settings_button = self.button("Choose editor…", self.choose_editor)
@@ -277,7 +328,7 @@ class Window(QMainWindow):
         return label
 
     def busy(self):
-        return self.worker is not None and self.worker.isRunning()
+        return (self.worker is not None and self.worker.isRunning()) or self.keymap.busy()
 
     def error(self, message):
         QMessageBox.warning(self, "GMK104 Studio", str(message))
@@ -293,6 +344,7 @@ class Window(QMainWindow):
         self.remove_button.setEnabled(ready and len(self.frames) == 2)
         self.reload_button.setEnabled(not self.busy() and self.editor_file is not None)
         self.refresh_button.setEnabled(not self.busy())
+        self.keymap.refresh()
 
     def check_device(self):
         if self.busy():
@@ -309,6 +361,7 @@ class Window(QMainWindow):
             self.connection.setText("○ Keyboard not found" if not devices else "Multiple keyboards found")
             self.connection.setStyleSheet("color: #b8b5ae;")
         self.update_enabled()
+        self.keymap.autoload()
 
     def open_file(self):
         if self.busy():
@@ -472,7 +525,7 @@ class Window(QMainWindow):
             entry = QListWidgetItem(f"{item['name']}\n{item.get('interval', '?')} ms")
             entry.setData(Qt.ItemDataRole.UserRole, str(path))
             entry.setData(Qt.ItemDataRole.UserRole + 1, item["name"])
-            entry.setToolTip(f"Uploaded {item.get('uploaded', '')}\n{path}")
+            entry.setToolTip(f"{item['name']}\nUploaded {item.get('uploaded', '')}\n{path}")
             try:
                 with Image.open(path) as image:
                     entry.setIcon(QIcon(QPixmap.fromImage(qimage(image))))
@@ -571,14 +624,16 @@ class Window(QMainWindow):
 
     def closeEvent(self, event):
         if self.busy():
-            self.error("Wait for the upload to finish before closing.")
+            self.error("Wait for the keyboard operation to finish before closing.")
+            event.ignore()
+        elif not self.keymap.confirm_discard():
             event.ignore()
         else:
             event.accept()
 
 
 def main():
-    parser = argparse.ArgumentParser(description="GMK104 Studio: native Linux keyboard artwork uploader")
+    parser = argparse.ArgumentParser(description="GMK104 Studio: native Linux screen editor and keymapper")
     parser.add_argument("image", nargs="?", help="Optional image or GIF to open")
     parser.add_argument("--version", action="version", version=f"GMK104 Studio {__version__}")
     parser.add_argument("--smoke-test", action="store_true", help=argparse.SUPPRESS)

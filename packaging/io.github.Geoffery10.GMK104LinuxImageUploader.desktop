@@ -1,7 +1,7 @@
 [Desktop Entry]
 Type=Application
 Name=GMK104 Studio
-Comment=Native Linux image and GIF uploader for the ZUOYA GMK104
+Comment=Native Linux screen editor and keymapper for the ZUOYA GMK104
 Exec=gmk104-studio %f
 Icon=gmk104-studio
 Terminal=false

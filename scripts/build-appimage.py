@@ -28,7 +28,7 @@ def run(args, **kwargs):
 
 def main():
     if sys.platform != "linux" or platform.machine() != "x86_64":
-        raise SystemExit("v1.0 AppImage builds support Linux x86_64 only.")
+        raise SystemExit("AppImage builds support Linux x86_64 only.")
     BUILD.mkdir(exist_ok=True)
     DIST.mkdir(exist_ok=True)
     arguments = [

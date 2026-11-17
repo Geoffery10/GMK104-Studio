@@ -4,17 +4,23 @@
   <metadata_license>CC0-1.0</metadata_license>
   <project_license>MIT</project_license>
   <name>GMK104 Studio</name>
-  <summary>Upload images and GIFs to a ZUOYA GMK104 keyboard on Linux</summary>
+  <summary>Edit the screen and keymap of a ZUOYA GMK104 keyboard on Linux</summary>
   <description>
     <p>A native Linux keyboard screen editor with black transparency, proportional
     fitting, animation previews, local upload history, and settings backups.</p>
+    <p>Edit four keymap layers with a physical keyboard preview, searchable key
+    picker, staged change review, private backups, verified writes, and restoration
+    from saved defaults or keymap backups.</p>
     <p>This independent reverse-engineered utility is not affiliated with the
     keyboard manufacturer. Use at your own risk; device damage is possible.</p>
   </description>
   <launchable type="desktop-id">io.github.Geoffery10.GMK104LinuxImageUploader.desktop</launchable>
-  <url type="homepage">https://github.com/Geoffery10/GMK104-Linux-Image-Uploader</url>
-  <url type="bugtracker">https://github.com/Geoffery10/GMK104-Linux-Image-Uploader/issues</url>
+  <url type="homepage">https://github.com/Geoffery10/GMK104-Studio</url>
+  <url type="bugtracker">https://github.com/Geoffery10/GMK104-Studio/issues</url>
   <provides><binary>gmk104-studio</binary></provides>
-  <releases><release version="1.0.0" date="2026-11-15"/></releases>
+  <releases>
+    <release version="2.0.0" date="2026-11-17"/>
+    <release version="1.0.0" date="2026-11-15"/>
+  </releases>
   <content_rating type="oars-1.1"/>
 </component>
