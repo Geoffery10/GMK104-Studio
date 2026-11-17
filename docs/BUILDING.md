@@ -6,6 +6,11 @@ Use Linux x86_64 and Python 3.11+. The release builder uses Ubuntu 22.04 and
 Python 3.12, providing a conservative glibc baseline. Building on a newer
 distribution can raise the resulting bundle's minimum system requirements.
 
+On Python 3.11, dependency metadata temporarily selects PySide6 below 6.12:
+6.12.0 has an upstream singleton-refcount crash on that interpreter
+(PYSIDE-3474). Python 3.12+ retains the normal `<7` range. Revisit the bound only
+after corrected wheels pass the subprocess UI regression and full suite on 3.11.
+
 ```bash
 python3 -m venv .venv
 .venv/bin/python -m pip install -e ".[build]"

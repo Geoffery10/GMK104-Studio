@@ -28,6 +28,8 @@
   without overlapping the preview; refresh README screenshots.
 - Remove horizontal scrolling from recent uploads, elide long names with full
   tooltips, and inset the Screen editor's filename, playback and export rows.
+- Avoid the upstream PySide6 6.12 singleton-refcount crash on Python 3.11 through
+  a conditional dependency bound, with a subprocess GUI regression test.
 - Strict VIA interface/descriptor/version checks; no reset or firmware commands.
 - One unchanged-word hardware write verified against all 960 keymap bytes;
   the keyboard owner also reports successful changed keymap writes.
